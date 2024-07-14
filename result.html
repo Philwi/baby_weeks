@@ -2,6 +2,7 @@
 <html>
 <head>
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
 <style>
 body {
   font-family: Arial, sans-serif;
@@ -49,6 +50,12 @@ p {
   border-radius: 5px;
   padding: 10px 20px;
   cursor: pointer;
+  transition: background-color 0.5s;
+}
+
+.button-click {
+  background-color: gray;
+  transition: background-color 0.5s;
 }
 
 .result {
@@ -134,7 +141,9 @@ p {
   <p class="result">Stunden: <span id="progress-in-hours"></span></p>
   <p id="progress-description"></p>
 
-  <button class="primary-btn" onclick="window.location.href = 'index.html';">Zurück</button>
+
+  <button class="primary-btn" onclick="window.location.href = 'index.html';"><i class="fas fa-arrow-left"></i> Zurück</button>
+  <button id="shareButton" onclick="toggleShareButton()" class="primary-btn"><i class="fas fa-share-square"></i> Teilen</button>
 </div>
 
 <script>
@@ -205,12 +214,7 @@ const development_stages = [
 ];
 
 function processForm() {
-  const birthdateString = localStorage.getItem("birthdate");
-  if (!birthdateString) {
-    alert("Bitte gib ein gültiges Geburtsdatum ein.");
-    window.location.href = 'index.html';
-    return;
-  }
+  const birthdateString = getBirthdateString();
   const birthdate = new Date(birthdateString);
   const now = new Date();
   const diffInSeconds = Math.floor((now - birthdate) / 1000);
@@ -252,8 +256,49 @@ function startCountdownToNextDevelopmentStep(diffInSeconds) {
   }, 1000);
 }
 
+function toggleShareButton() {
+  const shareButton = document.getElementById('shareButton');
+  console.log(shareButton.innerText);
+
+  if (shareButton.innerText === ' Teilen') {
+    // Copy the URL to the clipboard
+    const birthdate = getBirthdateString();
+    const url = new URL(window.location.href);
+    url.searchParams.set('birthdate', birthdate);
+
+    const dummy = document.createElement('input');
+    document.body.appendChild(dummy);
+    dummy.value = url.toString();
+    dummy.select();
+    document.execCommand('copy');
+    document.body.removeChild(dummy);
+
+    // Update the button
+    shareButton.innerHTML = '<i class="fas fa-check"></i> URL kopiert';
+    shareButton.classList.add('button-click');
+  } else {
+    // Reset the button
+    shareButton.innerHTML = '<i class="fas fa-share-square"></i> Teilen';
+    shareButton.classList.remove('button-click');
+  }
+}
+
+function getBirthdateString() {
+  let birthdate = localStorage.getItem("birthdate");
+  if (!birthdate) {
+    birthdate = new URLSearchParams(window.location.search).get('birthdate');
+  }
+
+  if (!birthdate) {
+    alert("Bitte gib ein gültiges Geburtsdatum ein.");
+    window.location.href = 'index.html';
+    return;
+  }
+
+  return birthdate;
+}
+
 document.onload = processForm();
 </script>
-
-  </body>
+</body>
 </html>
