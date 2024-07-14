@@ -135,11 +135,13 @@ p {
   <p class="result">Sekunden: <span id="seconds"></span></p>
 
   <h2>Der nächste Entwicklungssprung ist in:</h2>
-  <p id="countdown">Wird berechnet<span class="dots"><span>.</span><span>.</span><span>.</span></span></p>
-  <p class="result">Wochen: <span id="progress-in-weeks"></span></p>
-  <p class="result">Tage: <span id="progress-in-days"></span></p>
-  <p class="result">Stunden: <span id="progress-in-hours"></span></p>
-  <p id="progress-description"></p>
+  <div id="development_stage">
+    <p id="countdown">Wird berechnet<span class="dots"><span>.</span><span>.</span><span>.</span></span></p>
+    <p class="result">Wochen: <span id="progress-in-weeks"></span></p>
+    <p class="result">Tage: <span id="progress-in-days"></span></p>
+    <p class="result">Stunden: <span id="progress-in-hours"></span></p>
+    <p id="progress-description"></p>
+  </div>
 
 
   <button class="primary-btn" onclick="window.location.href = 'index.html';"><i class="fas fa-arrow-left"></i> Zurück</button>
@@ -151,8 +153,8 @@ p {
 const SECONDS_IN_HOUR = 60 * 60;
 const SECONDS_IN_DAY = SECONDS_IN_HOUR * 24;
 const SECONDS_IN_WEEK = SECONDS_IN_DAY * 7;
-const SECONDS_IN_MONTH = SECONDS_IN_WEEK * 4;
-const SECONDS_IN_YEAR = SECONDS_IN_MONTH * 12;
+const SECONDS_IN_MONTH = SECONDS_IN_DAY * 30.44;
+const SECONDS_IN_YEAR = SECONDS_IN_DAY * 365.25;
 
 // Predefined development stages
 const development_stages = [
@@ -241,6 +243,11 @@ function displayAge(diffInSeconds) {
 function startCountdownToNextDevelopmentStep(diffInSeconds) {
   const weeks = diffInSeconds / SECONDS_IN_WEEK;
   const nextDevelopment = development_stages.find((development_stage) => development_stage.woche > weeks);
+
+  if (!nextDevelopment) {
+    document.getElementById('development_stage').innerHTML = '<p>Dein Baby hat bereits alle Entwicklungsschritte durchlaufen.</p>';
+    return;
+  }
 
   document.getElementById('progress-in-weeks').innerHTML = `Noch <strong>${(nextDevelopment.woche - weeks - 1).toFixed(1)}</strong> Wochen bis zum nächsten Entwicklungssprung.`;
   document.getElementById('progress-in-days').innerHTML = `Noch <strong>${Math.floor((nextDevelopment.woche - weeks - 1) * 7)}</strong> Tage bis zum nächsten Entwicklungssprung.`;
