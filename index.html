@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+body {
+  font-family: Arial, sans-serif;
+  margin: 0;
+  padding: 0;
+  background-image: url('background.jpg');
+  background-size: cover;
+  background-position: center;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+}
+
+.container {
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 20px;
+  background-color: rgba(255, 255, 255); /* Semi-transparent white */
+  border-radius: 5px;
+}
+
+form {
+  background-color: #fff;
+  padding: 20px;
+  border-radius: 5px;
+  box-shadow: 0px 0px 10px 0px rgba(0,0,0,0.1);
+}
+
+input[type="datetime-local"] {
+  width: 28rem;
+  padding: 10px;
+  margin: 10px 0;
+  border-radius: 5px;
+  border: 1px solid #ddd;
+}
+
+input[type="submit"] {
+  background-color: #5C6BC0;
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  padding: 10px 20px;
+  cursor: pointer;
+}
+
+input[type="submit"]:hover {
+  background-color: #3F51B5;
+}
+</style>
+</head>
+<body>
+
+<div class="container">
+  <h1>Lasse ausrechnen, wie alt dein Baby ist!</h1>
+  <p>Wann wurde dein Baby geboren?</p>
+
+  <form onsubmit="event.preventDefault(); processForm();">
+    Geburtsdatum:<br>
+    <input type="datetime-local" name="birthdate">
+    <input type="submit" value="Weiter">
+  </form>
+</div>
+
+<script>
+document.onload = setValueFromLocalStorage();
+
+function setValueFromLocalStorage() {
+  var birthdate = localStorage.getItem("birthdate");
+  if (birthdate) {
+    document.getElementsByName("birthdate")[0].value = birthdate;
+  }
+}
+
+function processForm() {
+  var birthdate = document.getElementsByName("birthdate")[0].value;
+  localStorage.setItem("birthdate", birthdate);
+  localStorage.setItem("now", new Date());
+  window.location.href = "result.html";
+}
+</script>

@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+body {
+  font-family: Arial, sans-serif;
+  margin: 0;
+  padding: 0;
+  background-image: url('background.jpg');
+  background-size: cover;
+  background-position: center;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+}
+
+.container {
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 20px;
+  background-color: rgba(255, 255, 255); /* Semi-transparent white */
+  border-radius: 5px;
+}
+
+h1 {
+  color: #3F51B5;
+}
+
+h2 {
+  color: #5C6BC0;
+}
+
+label {
+  font-weight: bold;
+}
+
+p {
+  color: #333;
+  line-height: 1.6;
+}
+
+.primary-btn {
+  background-color: #5C6BC0;
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  padding: 10px 20px;
+  cursor: pointer;
+}
+
+.result {
+  font-weight: bold;
+  color: #5C6BC0;
+  margin-bottom: 10px;
+}
+
+.result span {
+  font-weight: normal;
+  color: #333;
+}
+
+</style>
+</head>
+<body>
+
+<div class="container">
+  <h1>So alt ist dein Baby!</h1>
+
+  <p class="result">Jahre: <span id="years"></span></p>
+  <p class="result">Monate: <span id="months"></span></p>
+  <p class="result">Wochen: <span id="weeks"></span></p>
+  <p class="result">Tage: <span id="days"></span></p>
+  <p class="result">Stunden: <span id="hours"></span></p>
+  <p class="result">Sekunden: <span id="seconds"></span></p>
+
+  <h2>Der nächste Entwicklungssprung ist in:</h2>
+  <p class="result">Wochen: <span id="progress-in-weeks"></span></p>
+  <p class="result">Tage: <span id="progress-in-days"></span></p>
+  <p class="result">Stunden: <span id="progress-in-hours"></span></p>
+  <label for="progress-description">Beschreibung:</label>
+  <p id="progress-description"></p>
+
+  <button class="primary-btn" onclick="window.location.href = 'index.html';">Zurück</button>
+</div>
+
+<script>
+    const entwicklungsspruenge = [
+      {
+        woche: 5,
+        rahmen: "4-6 Wochen",
+        bedeutung: "Das Baby beginnt, auf Geräusche zu reagieren und erste Geräusche zu machen."
+      },
+      {
+        woche: 8,
+        rahmen: "7-9 Wochen",
+        bedeutung: "Das Baby beginnt, Gesichter und Gegenstände zu erkennen und zu verfolgen."
+      },
+      {
+        woche: 12,
+        rahmen: "11-13 Wochen",
+        bedeutung: "Das Baby beginnt, seine Hände zu benutzen und kann Gegenstände greifen."
+      },
+      {
+        woche: 19,
+        rahmen: "18-20 Wochen",
+        bedeutung: "Das Baby beginnt, sich zu drehen und zu rollen."
+      },
+      {
+        woche: 26,
+        rahmen: "25-27 Wochen",
+        bedeutung: "Das Baby beginnt, zu sitzen und Gegenstände zu manipulieren."
+      },
+      {
+        woche: 37,
+        rahmen: "36-38 Wochen",
+        bedeutung: "Das Baby beginnt, zu krabbeln und sich hochzuziehen."
+      },
+      {
+        woche: 46,
+        rahmen: "45-47 Wochen",
+        bedeutung: "Das Baby beginnt, zu stehen und erste Schritte zu machen."
+      },
+      {
+        woche: 55,
+        rahmen: "54-56 Wochen",
+        bedeutung: "Das Baby beginnt, einfache Worte zu sprechen und zu verstehen."
+      },
+      {
+        woche: 64,
+        rahmen: "63-65 Wochen",
+        bedeutung: "Das Baby beginnt, einfache Sätze zu bilden und zu verstehen."
+      },
+      {
+        woche: 75,
+        rahmen: "74-76 Wochen",
+        bedeutung: "Das Baby beginnt, seine Umgebung aktiv zu erkunden und zu interagieren."
+      },
+      {
+        woche: 82,
+        rahmen: "81-83 Wochen",
+        bedeutung: "Das Baby beginnt, seine Unabhängigkeit zu betonen und einfache Aufgaben selbst zu erledigen."
+      }
+    ];
+
+    document.onload = propagateResult();
+
+    function propagateResult() {
+      const birthdateFromLocalStorage = localStorage.getItem('birthdate');
+      const birthdate = new Date(birthdateFromLocalStorage);
+      const now = new Date();
+
+      const diff = now - birthdate;
+      const years = (diff / 1000 / 60 / 60 / 24 / 365).toFixed(3);
+      const months = (diff / 1000 / 60 / 60 / 24 / 30).toFixed(3);
+      const weeks = (diff / 1000 / 60 / 60 / 24 / 7).toFixed(3);
+      const days = (diff / 1000 / 60 / 60 / 24).toFixed(3);
+      const hours = (diff / 1000 / 60 / 60).toFixed(3);
+      const seconds = (diff / 1000).toFixed(3);
+
+      document.getElementById('years').innerText = `${years} Jahre`;
+      document.getElementById('months').innerText = `${months} Monate`;
+      document.getElementById('weeks').innerText = `${weeks} Wochen (Es befindet sich in der ${Math.floor(weeks) + 1}. Woche)`;
+      document.getElementById('days').innerText = `${days} Tage`;
+      document.getElementById('hours').innerText = `${hours} Stunden`;
+      document.getElementById('seconds').innerText = `${seconds} Sekunden`;
+
+      const nextDevelopment = entwicklungsspruenge.find((entwicklungssprung) => {
+        return entwicklungssprung.woche > weeks;
+      });
+
+      document.getElementById('progress-in-weeks').innerHTML = `Noch <strong>${(nextDevelopment.woche - weeks - 1).toFixed(1)}</strong> Wochen bis zum Entwicklungssprung in der ${nextDevelopment.rahmen}.`;
+      document.getElementById('progress-in-days').innerHTML = `Noch <strong>${Math.floor((nextDevelopment.woche - weeks - 1) * 7)}</strong> Tage bis zum Entwicklungssprung in der ${nextDevelopment.rahmen}.`;
+      document.getElementById('progress-in-hours').innerHTML = `Noch <strong>${Math.floor((nextDevelopment.woche - weeks - 1) * 7 * 24)}</strong> Stunden bis zum Entwicklungssprung in der ${nextDevelopment.rahmen}.`;
+      document.getElementById('progress-description').innerText = nextDevelopment.bedeutung;
+    }
+    </script>
+
+</body>
+</html>
