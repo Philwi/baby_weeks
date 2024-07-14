@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <style>
 body {
   font-family: Arial, sans-serif;
@@ -17,9 +18,10 @@ body {
 
 .container {
   max-width: 600px;
+  width: 90%; /* Make the container responsive */
   margin: 0 auto;
   padding: 20px;
-  background-color: rgba(255, 255, 255); /* Semi-transparent white */
+  background-color: rgba(255, 255, 255, 0.9); /* Semi-transparent white */
   border-radius: 5px;
 }
 
@@ -58,6 +60,18 @@ p {
 .result span {
   font-weight: normal;
   color: #333;
+}
+
+@media (max-width: 600px) {
+  /* Adjust styles for smaller screens */
+  .container {
+    width: 100%;
+    padding: 10px;
+  }
+
+  .primary-btn {
+    width: 100%;
+  }
 }
 
 </style>
