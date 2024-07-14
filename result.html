@@ -85,7 +85,15 @@ p {
 </div>
 
 <script>
-const entwicklungsspruenge = [
+// Constants for time conversions
+const SECONDS_IN_HOUR = 60 * 60;
+const SECONDS_IN_DAY = SECONDS_IN_HOUR * 24;
+const SECONDS_IN_WEEK = SECONDS_IN_DAY * 7;
+const SECONDS_IN_MONTH = SECONDS_IN_WEEK * 4;
+const SECONDS_IN_YEAR = SECONDS_IN_MONTH * 12;
+
+// Predefined development stages
+const development_stages = [
   {
     woche: 5,
     rahmen: "4-6 Wochen",
@@ -143,52 +151,49 @@ const entwicklungsspruenge = [
   }
 ];
 
-let countdownInterval;
-
-document.onload = propagateResult();
-
-function propagateResult() {
-  const birthdateFromLocalStorage = localStorage.getItem('birthdate');
-  const birthdate = new Date(birthdateFromLocalStorage);
+function processForm() {
+  const birthdate = new Date(localStorage.getItem("birthdate"));
   const now = new Date();
+  const diffInSeconds = Math.floor((now - birthdate) / 1000);
 
-  const diff = now - birthdate;
-  const years = (diff / 1000 / 60 / 60 / 24 / 365).toFixed(3);
-  const months = (diff / 1000 / 60 / 60 / 24 / 30).toFixed(3);
-  const weeks = (diff / 1000 / 60 / 60 / 24 / 7).toFixed(3);
-  const days = (diff / 1000 / 60 / 60 / 24).toFixed(3);
-  const hours = (diff / 1000 / 60 / 60).toFixed(3);
-  const seconds = (diff / 1000).toFixed(3);
+  displayAge(diffInSeconds);
+  startCountdownToNextDevelopmentStep(diffInSeconds);
+}
 
-  document.getElementById('years').innerText = `${years} Jahre`;
-  document.getElementById('months').innerText = `${months} Monate`;
-  document.getElementById('weeks').innerText = `${weeks} Wochen (Es befindet sich in der ${Math.floor(weeks) + 1}. Woche)`;
-  document.getElementById('days').innerText = `${days} Tage`;
-  document.getElementById('hours').innerText = `${hours} Stunden`;
-  document.getElementById('seconds').innerText = `${seconds} Sekunden`;
+function displayAge(diffInSeconds) {
+  const years = (diffInSeconds / SECONDS_IN_YEAR).toFixed(3);
+  const months = (diffInSeconds / SECONDS_IN_MONTH).toFixed(3);
+  const weeks = (diffInSeconds / SECONDS_IN_WEEK).toFixed(3);
+  const days = (diffInSeconds / SECONDS_IN_DAY).toFixed(3);
+  const hours = (diffInSeconds / SECONDS_IN_HOUR).toFixed(3);
 
-  const nextDevelopment = entwicklungsspruenge.find((entwicklungssprung) => {
-    return entwicklungssprung.woche > weeks;
-  });
+  document.getElementById('years').innerText = `${years}`;
+  document.getElementById('months').innerText = `${months}`;
+  document.getElementById('weeks').innerText = `${weeks} (Es befindet sich in der ${Math.floor(weeks) + 1}. Woche)`;
+  document.getElementById('days').innerText = `${days}`;
+  document.getElementById('hours').innerText = `${hours}`;
+  document.getElementById('seconds').innerText = `${diffInSeconds}`;
+}
+
+function startCountdownToNextDevelopmentStep(diffInSeconds) {
+  const weeks = diffInSeconds / SECONDS_IN_WEEK;
+  const nextDevelopment = development_stages.find((development_stage) => development_stage.woche > weeks);
 
   document.getElementById('progress-in-weeks').innerHTML = `Noch <strong>${(nextDevelopment.woche - weeks - 1).toFixed(1)}</strong> Wochen bis zum nächsten Entwicklungssprung.`;
   document.getElementById('progress-in-days').innerHTML = `Noch <strong>${Math.floor((nextDevelopment.woche - weeks - 1) * 7)}</strong> Tage bis zum nächsten Entwicklungssprung.`;
   document.getElementById('progress-in-hours').innerHTML = `Noch <strong>${Math.floor((nextDevelopment.woche - weeks - 1) * 7 * 24)}</strong> Stunden bis zum nächsten Entwicklungssprung.`;
   document.getElementById('progress-description').innerText = `Der nächste Entwicklungssprung ist in der Regel zwischen der ${nextDevelopment.rahmen}. ${nextDevelopment.bedeutung}`;
 
-
-  if (countdownInterval) {
-    clearInterval(countdownInterval);
-  }
-
-  let remainingTimeInSeconds = (nextDevelopment.woche - weeks) * 7 * 24 * 60 * 60;
+  let remainingTimeInSeconds = (nextDevelopment.woche - weeks) * SECONDS_IN_WEEK;
 
   // Start the countdown
-  countdownInterval = setInterval(function() {
+  setInterval(function() {
     remainingTimeInSeconds--;
     document.getElementById('countdown').innerHTML = `Noch <strong>${Math.floor(remainingTimeInSeconds)}</strong> Sekunden bis zum nächsten Entwicklungssprung.`;
   }, 1000);
 }
+
+document.onload = processForm();
 </script>
 
   </body>

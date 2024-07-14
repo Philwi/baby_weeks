@@ -78,7 +78,6 @@ function setValueFromLocalStorage() {
 function processForm() {
   var birthdate = document.getElementsByName("birthdate")[0].value;
   localStorage.setItem("birthdate", birthdate);
-  localStorage.setItem("now", new Date());
   window.location.href = "result.html";
 }
 </script>
