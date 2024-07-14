@@ -62,7 +62,7 @@ input[type="submit"]:hover {
 
   <form onsubmit="event.preventDefault(); processForm();">
     Geburtsdatum:<br>
-    <input type="datetime-local" name="birthdate">
+    <input type="datetime-local" name="birthdate" required>
     <input type="submit" value="Weiter">
   </form>
 </div>
@@ -71,14 +71,19 @@ input[type="submit"]:hover {
 document.onload = setValueFromLocalStorage();
 
 function setValueFromLocalStorage() {
-  var birthdate = localStorage.getItem("birthdate");
+  let birthdate = localStorage.getItem("birthdate");
   if (birthdate) {
     document.getElementsByName("birthdate")[0].value = birthdate;
   }
 }
 
 function processForm() {
-  var birthdate = document.getElementsByName("birthdate")[0].value;
+  let birthdate = document.getElementsByName("birthdate")[0].value;
+  if (!birthdate || birthdate === "" || new Date(birthdate) > new Date() || new Date(birthdate) < new Date("1900-01-01")) {
+    alert("Bitte gib ein gültiges Geburtsdatum ein.");
+    return;
+  }
+
   localStorage.setItem("birthdate", birthdate);
   window.location.href = "result.html";
 }
