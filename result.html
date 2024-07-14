@@ -3,6 +3,7 @@
 <head>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.30.1/moment-with-locales.min.js" integrity="sha512-4F1cxYdMiAW98oomSLaygEwmCnIP38pb4Kx70yQYqRwLVCs3DbRumfBq82T08g/4LJ/smbFGFpmeFlQgoDccgg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 <style>
 body {
   font-family: Arial, sans-serif;
@@ -149,13 +150,7 @@ p {
 </div>
 
 <script>
-// Constants for time conversions
-const SECONDS_IN_HOUR = 60 * 60;
-const SECONDS_IN_DAY = SECONDS_IN_HOUR * 24;
-const SECONDS_IN_WEEK = SECONDS_IN_DAY * 7;
-const SECONDS_IN_MONTH = SECONDS_IN_DAY * 30.44;
-const SECONDS_IN_YEAR = SECONDS_IN_DAY * 365.25;
-
+var moment = window.moment;
 // Predefined development stages
 const development_stages = [
   {
@@ -219,29 +214,33 @@ function processForm() {
   const birthdateString = getBirthdateString();
   const birthdate = new Date(birthdateString);
   const now = new Date();
-  const diffInSeconds = Math.floor((now - birthdate) / 1000);
 
-  displayAge(diffInSeconds);
-  startCountdownToNextDevelopmentStep(diffInSeconds);
+  displayAge(birthdate, now);
+  startCountdownToNextDevelopmentStep(birthdate, now);
 }
 
-function displayAge(diffInSeconds) {
-  const years = (diffInSeconds / SECONDS_IN_YEAR).toFixed(3);
-  const months = (diffInSeconds / SECONDS_IN_MONTH).toFixed(3);
-  const weeks = (diffInSeconds / SECONDS_IN_WEEK).toFixed(3);
-  const days = (diffInSeconds / SECONDS_IN_DAY).toFixed(3);
-  const hours = (diffInSeconds / SECONDS_IN_HOUR).toFixed(3);
+function displayAge(birthdate, now) {
+  const birthdayMoment = moment(birthdate);
+  const nowMoment = moment(now);
+  const years = nowMoment.diff(birthdayMoment, 'years', true);
+  const months = nowMoment.diff(birthdayMoment, 'months', true);
+  const weeks = nowMoment.diff(birthdayMoment, 'weeks', true);
+  const days = nowMoment.diff(birthdayMoment, 'days', true);
+  const hours = nowMoment.diff(birthdayMoment, 'hours', true);
+  const diffInSeconds = nowMoment.diff(birthdayMoment, 'seconds', true);
 
-  document.getElementById('years').innerText = `${years}`;
-  document.getElementById('months').innerText = `${months}`;
-  document.getElementById('weeks').innerText = `${weeks} (Es befindet sich in der ${Math.floor(weeks) + 1}. Woche)`;
-  document.getElementById('days').innerText = `${days}`;
-  document.getElementById('hours').innerText = `${hours}`;
-  document.getElementById('seconds').innerText = `${diffInSeconds}`;
+  document.getElementById('years').innerText = `${years.toFixed(3)}`;
+  document.getElementById('months').innerText = `${months.toFixed(3)}`;
+  document.getElementById('weeks').innerText = `${weeks.toFixed(3)} (Es befindet sich in der ${Math.floor(weeks) + 1}. Woche)`;
+  document.getElementById('days').innerText = `${days.toFixed(3)}`;
+  document.getElementById('hours').innerText = `${hours.toFixed(3)}`;
+  document.getElementById('seconds').innerText = `${diffInSeconds.toFixed(3)}`;
 }
 
-function startCountdownToNextDevelopmentStep(diffInSeconds) {
-  const weeks = diffInSeconds / SECONDS_IN_WEEK;
+function startCountdownToNextDevelopmentStep(birthdate, now) {
+  const birthdateMoment = moment(birthdate);
+  const nowMoment = moment(now);
+  const weeks = nowMoment.diff(birthdateMoment, 'weeks', true);
   const nextDevelopment = development_stages.find((development_stage) => development_stage.woche > weeks);
 
   if (!nextDevelopment) {
@@ -254,7 +253,7 @@ function startCountdownToNextDevelopmentStep(diffInSeconds) {
   document.getElementById('progress-in-hours').innerHTML = `Noch <strong>${Math.floor((nextDevelopment.woche - weeks - 1) * 7 * 24)}</strong> Stunden bis zum nächsten Entwicklungssprung.`;
   document.getElementById('progress-description').innerText = `Der nächste Entwicklungssprung ist in der Regel zwischen der ${nextDevelopment.rahmen}. ${nextDevelopment.bedeutung}`;
 
-  let remainingTimeInSeconds = (nextDevelopment.woche - weeks) * SECONDS_IN_WEEK;
+  let remainingTimeInSeconds = nowMoment.diff(birthdateMoment, 'seconds', true);
 
   // Start the countdown
   setInterval(function() {
