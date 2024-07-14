@@ -205,7 +205,13 @@ const development_stages = [
 ];
 
 function processForm() {
-  const birthdate = new Date(localStorage.getItem("birthdate"));
+  const birthdateString = localStorage.getItem("birthdate");
+  if (!birthdateString) {
+    alert("Bitte gib ein gültiges Geburtsdatum ein.");
+    window.location.href = 'index.html';
+    return;
+  }
+  const birthdate = new Date(birthdateString);
   const now = new Date();
   const diffInSeconds = Math.floor((now - birthdate) / 1000);
 
