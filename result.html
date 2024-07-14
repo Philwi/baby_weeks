@@ -75,6 +75,7 @@ p {
   <p class="result">Sekunden: <span id="seconds"></span></p>
 
   <h2>Der nächste Entwicklungssprung ist in:</h2>
+  <p id="countdown"></p>
   <p class="result">Wochen: <span id="progress-in-weeks"></span></p>
   <p class="result">Tage: <span id="progress-in-days"></span></p>
   <p class="result">Stunden: <span id="progress-in-hours"></span></p>
@@ -142,6 +143,8 @@ const entwicklungsspruenge = [
   }
 ];
 
+let countdownInterval;
+
 document.onload = propagateResult();
 
 function propagateResult() {
@@ -172,6 +175,19 @@ function propagateResult() {
   document.getElementById('progress-in-days').innerHTML = `Noch <strong>${Math.floor((nextDevelopment.woche - weeks - 1) * 7)}</strong> Tage bis zum nächsten Entwicklungssprung.`;
   document.getElementById('progress-in-hours').innerHTML = `Noch <strong>${Math.floor((nextDevelopment.woche - weeks - 1) * 7 * 24)}</strong> Stunden bis zum nächsten Entwicklungssprung.`;
   document.getElementById('progress-description').innerText = `Der nächste Entwicklungssprung ist in der Regel zwischen der ${nextDevelopment.rahmen}. ${nextDevelopment.bedeutung}`;
+
+
+  if (countdownInterval) {
+    clearInterval(countdownInterval);
+  }
+
+  let remainingTimeInSeconds = (nextDevelopment.woche - weeks) * 7 * 24 * 60 * 60;
+
+  // Start the countdown
+  countdownInterval = setInterval(function() {
+    remainingTimeInSeconds--;
+    document.getElementById('countdown').innerHTML = `Noch <strong>${Math.floor(remainingTimeInSeconds)}</strong> Sekunden bis zum nächsten Entwicklungssprung.`;
+  }, 1000);
 }
 </script>
 
